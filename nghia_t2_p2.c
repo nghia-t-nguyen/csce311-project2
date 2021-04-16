@@ -1,3 +1,7 @@
+/* Completed by Nghia Nguyen
+ * April 15, 2021
+ */
+
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
@@ -144,6 +148,7 @@ void *arrive(void *arg) {
       pthread_cond_wait(&westQueue, &mutex);
   }
   total++;
+  //printf("total: %d \n", total);
   pthread_mutex_unlock(&mutex);
 }
 
@@ -171,21 +176,24 @@ void *cross(void *arg) {
 
   if (b->direct == 'n') {
     northBats--;
+    sleep(1);
     pthread_cond_signal(&northQueue);
   }
   if (b->direct == 'e') {
     eastBats--;
+    sleep(1);
     pthread_cond_signal(&eastQueue);
   }
   if (b->direct == 's') {
     southBats--;
+    sleep(1);
     pthread_cond_signal(&southQueue);
   }
   if (b->direct == 'w') {
     westBats--;
+    sleep(1);
     pthread_cond_signal(&westQueue);
   }
-  sleep(1);
   total--;
   pthread_mutex_unlock(&mutex);
 }
@@ -216,9 +224,11 @@ void *check(void *arg) {
 	//if total == 4
 	//   if b->direct == 'n' 
 	//       pthread_cond_signal(&northFirst)
-  if (northBats > 0 && southBats > 0 && eastBats > 0 && westBats>0) {
-    printf("BAT jam detected, signaling North to go\n");
-    pthread_cond_signal(&northFirst);
+  if (total == 4) {
+    if (b->direct == 'n') {
+      printf("BAT jam detected, signaling North to go\n");
+      pthread_cond_signal(&northFirst);
+    }
   }
 }
 
